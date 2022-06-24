@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByEmail(String email) {
 		Optional<User> user= userRepository.findByEmail(email);
-		if(user.isEmpty()) {
+		if(!user.isPresent()) {
 			throw new ResourceNotFoundException("User", "email", email);
 		}
 		return user.get();
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 	public String changePassword(ChangePasswordDTO changePasswordDto) {
 		//System.out.println("User Id is "+changePasswordDto.getUserId());
 		Optional<User> user= userRepository.findById(changePasswordDto.getUserId());
-		if(user.isEmpty()) {
+		if(!user.isPresent()) {
 			throw new ResourceNotFoundException("User", "id", String.valueOf(changePasswordDto.getUserId()));
 		}
 		userRepository.setUserPasswordById(passwordEncoder.encode(changePasswordDto.getNewPassword()), changePasswordDto.getUserId());
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserById(Long id) {
 		Optional<User> user= userRepository.findById(id);
-		if(user.isEmpty()) {
+		if(!user.isPresent()) {
 			throw new ResourceNotFoundException("User", "id", String.valueOf(id));
 		}
 		return user.get();
