@@ -4,8 +4,6 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.theadventure.model.BlogPost;
-
 @Component
 public class UserDTO {
 	

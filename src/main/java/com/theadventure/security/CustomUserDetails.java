@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.theadventure.exception.ResourceNotFoundException;
 import com.theadventure.model.User;
-import com.theadventure.repository.UserRepository;
 import com.theadventure.service.AuthenticationService;
 
 @Service
