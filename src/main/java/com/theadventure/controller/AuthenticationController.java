@@ -80,9 +80,12 @@ public class AuthenticationController {
 	public ResponseEntity<Map<String,String>> signUp(@Valid @RequestBody AuthUserSignUpDTO authUserSignUpDTO){
 		User user = maptoUser(authUserSignUpDTO);
 		User createdUser = authenticationService.createUser(user);
-		Map<String,String> result = Map.of("userId",String.valueOf(createdUser.getUserId()),
+		Map<String,String> result = new HashMap<String,String>();/*Map.of("userId",String.valueOf(createdUser.getUserId()),
 				"email",user.getEmail(),
-				"name",user.getName());
+				"name",user.getName());*/
+		result.put("userId",String.valueOf(createdUser.getUserId()));
+		result.put("email",user.getEmail());
+		result.put("name",user.getName());
 		return new ResponseEntity<>(result,HttpStatus.CREATED);
 	}
 }
