@@ -30,12 +30,13 @@ public class BlogPostServiceImpl implements BlogPostService {
 	
 	@Override
 	public BlogPost createPost(BlogPostDTO blogPostDto) {
-		Optional<User> user = userRepository.findById(Long.parseLong(blogPostDto.getAuthor()));
+		Optional<User> user = userRepository.findById(blogPostDto.getAuthorId());
 		BlogPost post = new BlogPost();
 		post.setTitle(blogPostDto.getTitle());
 		post.setContent(blogPostDto.getContent());
 		post.setAuthor(user.get());
 		post.setImageBase64(blogPostDto.getImageBase64());
+		post.setCreatedDate(blogPostDto.getCreatedDate());
 		return blogPostRepositiory.save(post);
 	}
 	
@@ -46,5 +47,14 @@ public class BlogPostServiceImpl implements BlogPostService {
 			throw new ResourceNotFoundException("Post", "id", String.valueOf(id));
 		}
 		return post.get();
+	}
+
+	@Override
+	public void deletePost(Long id) {
+		Optional<BlogPost> post = blogPostRepositiory.findById(id);
+		if(post.isEmpty()) {
+			throw new ResourceNotFoundException("Post", "id", String.valueOf(id));
+		}
+		blogPostRepositiory.deleteById(id);;
 	}
 }

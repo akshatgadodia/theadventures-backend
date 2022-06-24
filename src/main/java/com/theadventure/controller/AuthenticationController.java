@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,17 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
 import com.theadventure.model.User;
 import com.theadventure.payload.AuthUserSignInDTO;
 import com.theadventure.payload.AuthUserSignUpDTO;
+import com.theadventure.security.jwt.JwtAuthenticationTokenProvider;
 import com.theadventure.service.AuthenticationService;
+import com.theadventure.service.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(value="REST API's for Authentication")
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
 	
 	@Autowired 
 	private ModelMapper modelMapper; 
@@ -39,17 +53,23 @@ public class AuthenticationController {
 		return modelMapper.map(authUserSignUpDTO,User.class);
 	}
 	
+	@ApiOperation(value= "REST API to signin user")
 	@PostMapping("/signin")
 	public ResponseEntity<Map<String,String>> signIn(@Valid @RequestBody AuthUserSignInDTO authUserSignInDTO){
+		User user = userService.getUserByEmail(authUserSignInDTO.getEmail());
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
 				(authUserSignInDTO.getEmail(), authUserSignInDTO.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		Map<String,String> signInDetails = Map.of("userid","uid",
-				"name","name",
-				"jwt","jwt");
+		String token = jwtAuthenticationTokenProvider.generateToken(authentication);
+		Map<String,String> signInDetails = Map.of("userId",String.valueOf(user.getUserId()),
+				"userName",user.getName(),
+				"userEmail",user.getEmail(),
+				"accessToken",token,
+				"tokenType","Bearer");
 		return new ResponseEntity<>(signInDetails,HttpStatus.CREATED);
 	}
 	
+	@ApiOperation(value= "REST API to signup user")
 	@PostMapping("/signup")
 	public ResponseEntity<Map<String,String>> signUp(@Valid @RequestBody AuthUserSignUpDTO authUserSignUpDTO){
 		User user = maptoUser(authUserSignUpDTO);

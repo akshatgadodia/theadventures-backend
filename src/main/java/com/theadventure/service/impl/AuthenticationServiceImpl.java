@@ -27,6 +27,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new UserAlreadyExistsException("User", "email", String.valueOf(user.getEmail()));
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		System.out.println(user.getPassword());
 		user.setRole("USER");
 		return userRepository.save(user);
 		

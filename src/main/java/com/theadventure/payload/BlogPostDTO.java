@@ -13,31 +13,35 @@ public class BlogPostDTO {
 	
 	Long postId;
 	
-	@Size(min=1,max=50)
+	@Size(min=1)
 	private String title;
 
-	@Size(min=10)
+	@Size(min=1)
 	private String content;
 	
 	@NotNull
 	@NotBlank
-	private String author;
+	private String authorName;
+	
+	private Long authorId;
 	
 	private String imageBase64;
 	
 	Date createdDate;
+	
 	public BlogPostDTO() {
 		super();
 	}
 
-	public BlogPostDTO(Long postId, String title, String content, String author,String imageBase64, Date createdDate) {
+	public BlogPostDTO(Long postId, String title, String content, String authorName,String imageBase64, Date createdDate, Long authorId) {
 		super();
 		this.postId = postId;
 		this.title = title;
 		this.content = content;
-		this.author = author;
+		this.authorName = authorName;
 		this.createdDate=createdDate;
 		this.imageBase64=imageBase64;
+		this.authorId=authorId;
 	}
 
 
@@ -81,19 +85,19 @@ public class BlogPostDTO {
 		this.content = content;
 	}
 
-	public String getAuthor() {
-		return author;
+	public String getAuthorName() {
+		return authorName;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+	public Long getAuthorId() {
+		return authorId;
 	}
 
-	@Override
-	public String toString() {
-		return "BlogPostDTO [postId=" + postId + ", title=" + title + ", content=" + content + ", author=" + author
-				+ ", imageBase64=" + imageBase64 + "]";
+	public void setAuthorId(Long authorId) {
+		this.authorId = authorId;
 	}
-	
-	
+
 }

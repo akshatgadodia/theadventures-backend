@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,23 +18,23 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception, WebRequest webRequest){
+	
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErrorDetails> handleIllegalStateException(IllegalStateException exception, WebRequest webRequest){
+		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ErrorDetails> handleConstraintViolationException(ConstraintViolationException exception, WebRequest webRequest){
 		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
 		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.FORBIDDEN);
 	}
 	
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception, WebRequest webRequest){
 		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
-		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.NOT_FOUND);
-	}
-	
-	@ExceptionHandler(UserAlreadyExistsException.class)
-	public ResponseEntity<ErrorDetails> handleUserAlreadyExistsException(UserAlreadyExistsException exception, WebRequest webRequest){
-		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
-		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.FORBIDDEN);
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,6 +52,23 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException exception, WebRequest webRequest){
 		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
 		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
+	}
+	@ExceptionHandler(MessageException.class)
+	public ResponseEntity<ErrorDetails> handleMessageException(MessageException exception, WebRequest webRequest){
+		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
+		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<ErrorDetails> handleUserAlreadyExistsException(UserAlreadyExistsException exception, WebRequest webRequest){
+		ErrorDetails  errorDetails = new ErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false));
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(Exception.class)

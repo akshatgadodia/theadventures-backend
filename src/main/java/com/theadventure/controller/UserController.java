@@ -4,22 +4,34 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import com.theadventure.model.BlogPost;
 import com.theadventure.model.User;
 import com.theadventure.payload.BlogPostDTO;
+import com.theadventure.payload.ChangePasswordDTO;
 import com.theadventure.payload.UserDTO;
 import com.theadventure.service.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+
+@Api("REST API's for User")
 @RestController
 @RequestMapping("/api/v1/user")
+@CrossOrigin(origins = "*")
 public class UserController {
 	
 	@Autowired
@@ -28,7 +40,7 @@ public class UserController {
 	
 	private BlogPostDTO mapToBlogPostDto(BlogPost blogPost) {
 		BlogPostDTO blogPostDTO = new BlogPostDTO(blogPost.getPostId(),blogPost.getTitle(),blogPost.getContent(),
-				blogPost.getAuthor().getName(),blogPost.getImageBase64(),blogPost.getCreatedDate());
+				blogPost.getAuthor().getName(),blogPost.getImageBase64(),blogPost.getCreatedDate(),blogPost.getAuthor().getUserId());
 		return blogPostDTO;
 	}
 	
@@ -44,17 +56,24 @@ public class UserController {
 		
 	}
 	
+	//@ApiOperation(value= "REST API to get update user password")
+	@PatchMapping
+	public ResponseEntity<String> changeUserPassword(@RequestBody ChangePasswordDTO changePasswordDto){
+		return ResponseEntity.ok(userService.changePassword(changePasswordDto));
+	}
 	
+	@ApiOperation(value= "REST API to get all users")
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> getAllUsers(){
 		List<UserDTO> list = userService.getAllUsers().stream().map(this::mapToDto).collect(Collectors.toList());
 		return ResponseEntity.ok(list);
 	}
 	
-	@GetMapping("/{email}")
-	public ResponseEntity<UserDTO>getUserById(@PathVariable String email){
-		UserDTO userDto = mapToDto(userService.getUserByEmail(email));
+	@ApiOperation(value= "REST API to get user by email")
+	@GetMapping("/{id}")
+	public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
+		UserDTO userDto = mapToDto(userService.getUserById(id));
 		return ResponseEntity.ok(userDto);
 	}
-	
+
 }
