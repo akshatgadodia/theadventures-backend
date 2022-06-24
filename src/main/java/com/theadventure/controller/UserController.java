@@ -56,7 +56,7 @@ public class UserController {
 		
 	}
 	
-	//@ApiOperation(value= "REST API to get update user password")
+	@ApiOperation(value= "REST API to get update user password")
 	@PatchMapping
 	public ResponseEntity<String> changeUserPassword(@RequestBody ChangePasswordDTO changePasswordDto){
 		return ResponseEntity.ok(userService.changePassword(changePasswordDto));
