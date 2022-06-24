@@ -1,5 +1,6 @@
 package com.theadventure.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -61,11 +62,16 @@ public class AuthenticationController {
 				(authUserSignInDTO.getEmail(), authUserSignInDTO.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String token = jwtAuthenticationTokenProvider.generateToken(authentication);
-		Map<String,String> signInDetails = Map.of("userId",String.valueOf(user.getUserId()),
+		Map<String,String> signInDetails = new HashMap<String,String>();/*Map.of("userId",String.valueOf(user.getUserId()),
 				"userName",user.getName(),
 				"userEmail",user.getEmail(),
 				"accessToken",token,
-				"tokenType","Bearer");
+				"tokenType","Bearer");*/
+		signInDetails.put("userId",String.valueOf(user.getUserId()));
+		signInDetails.put("userName",user.getName());
+		signInDetails.put("userEmail",user.getEmail());
+		signInDetails.put(	"accessToken",token);
+		signInDetails.put("tokenType","Bearer");
 		return new ResponseEntity<>(signInDetails,HttpStatus.CREATED);
 	}
 	
