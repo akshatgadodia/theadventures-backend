@@ -43,7 +43,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 	@Override
 	public BlogPost getPost(Long id) {
 		Optional<BlogPost> post = blogPostRepositiory.findById(id);
-		if(post.isEmpty()) {
+		if(!post.isPresent()) {
 			throw new ResourceNotFoundException("Post", "id", String.valueOf(id));
 		}
 		return post.get();
@@ -52,7 +52,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 	@Override
 	public void deletePost(Long id) {
 		Optional<BlogPost> post = blogPostRepositiory.findById(id);
-		if(post.isEmpty()) {
+		if(!post.isPresent()) {
 			throw new ResourceNotFoundException("Post", "id", String.valueOf(id));
 		}
 		blogPostRepositiory.deleteById(id);;
